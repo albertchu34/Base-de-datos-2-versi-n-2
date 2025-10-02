@@ -15,7 +15,7 @@ function readEnv(key: EnvKey) {
   return value
 }
 
-export const env: EnvValues = {
-  NEXT_PUBLIC_SUPABASE_URL: readEnv("NEXT_PUBLIC_SUPABASE_URL"),
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: readEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
-}
+export const env: EnvValues = required.reduce((acc, key) => {
+  acc[key] = readEnv(key)
+  return acc
+}, {} as EnvValues)

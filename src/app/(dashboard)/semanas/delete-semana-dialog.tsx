@@ -54,7 +54,7 @@ export function DeleteSemanaDialog({ semana, children }: DeleteSemanaDialogProps
         <AlertDialogHeader>
           <AlertDialogTitle>Eliminar semana</AlertDialogTitle>
           <AlertDialogDescription className="text-muted-foreground">
-            Esta acción eliminará la semana "{semana.titulo}" y todos los archivos asociados.
+            Esta acción eliminará la semana {semana.titulo} y todos los archivos asociados.
           </AlertDialogDescription>
         </AlertDialogHeader>
         {error && (

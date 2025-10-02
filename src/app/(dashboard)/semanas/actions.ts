@@ -9,7 +9,6 @@ import { extractDriveId } from "@/lib/drive"
 import {
   createArchivoSchema,
   createSemanaSchema,
-  type CreateArchivoSchema,
   type CreateSemanaSchema,
 } from "@/lib/validation/semanas"
 

@@ -1,5 +1,13 @@
+import Image from "next/image"
 import Link from "next/link"
 import { CalendarDays, Download, FileText, GraduationCap } from "lucide-react"
+
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 
 import { getSemanasWithArchivos } from "@/lib/data/semanas"
 
@@ -25,12 +33,24 @@ export default async function HomePage() {
             </p>
             <h1 className="text-gradient text-2xl font-semibold">Base de Datos II</h1>
           </div>
-          <Link
-            href="/login"
-            className="rounded-full border border-primary/40 bg-primary/10 px-4 py-2 text-sm font-medium text-primary transition hover:bg-primary/20"
-          >
-            Ingresar al panel
-          </Link>
+          <div className="flex items-center gap-4">
+            <div className="rounded-xl border border-white/20 bg-white/90 p-2 shadow-[0_8px_20px_rgba(0,0,0,0.25)]">
+              <Image
+                src="/logo_upla.jpg"
+                alt="Logo de la UPLA"
+                width={72}
+                height={72}
+                className="h-14 w-auto object-contain"
+                priority
+              />
+            </div>
+            <Link
+              href="/login"
+              className="rounded-full border border-primary/40 bg-primary/10 px-4 py-2 text-sm font-medium text-primary transition hover:bg-primary/20"
+            >
+              Ingresar al panel
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -93,9 +113,9 @@ export default async function HomePage() {
                 </p>
               </div>
             </div>
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="flex flex-col gap-6">
               {semanas.length === 0 ? (
-                <div className="col-span-full rounded-2xl border border-dashed border-white/15 bg-[#141632]/50 p-10 text-center text-sm text-muted-foreground">
+                <div className="rounded-2xl border border-dashed border-white/15 bg-[#141632]/50 p-10 text-center text-sm text-muted-foreground">
                   Aún no hay semanas publicadas. Regresa pronto para ver las actualizaciones.
                 </div>
               ) : (
@@ -127,44 +147,56 @@ export default async function HomePage() {
                           Esta semana aún no cuenta con archivos publicados.
                         </p>
                       ) : (
-                        semana.archivos.map((archivo) => (
-                          <div
-                            key={archivo.id}
-                            className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-[#161834]/60 p-4 sm:flex-row sm:items-center sm:justify-between"
-                          >
-                            <div className="flex items-start gap-3">
-                              <div className="rounded-full border border-primary/30 bg-primary/10 p-2 text-primary">
-                                <FileText className="size-4" />
-                              </div>
-                              <div>
-                                <p className="font-medium text-white">{archivo.nombre}</p>
-                                <p className="text-xs text-muted-foreground">
-                                  Publicado el {formatDate(archivo.fecha_subida)}
-                                </p>
-                              </div>
-                            </div>
-                            <div className="flex flex-wrap gap-2">
-                              <a
-                                href={"https://drive.google.com/file/d/" + archivo.drive_id + "/view"}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="rounded-full border border-primary/30 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-primary transition hover:bg-primary/20"
-                              >
-                                Previsualizar
-                              </a>
-                              <a
-                                href={"https://drive.google.com/uc?export=download&id=" + archivo.drive_id}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="rounded-full border border-white/20 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-white/10"
-                              >
-                                <span className="flex items-center gap-2">
-                                  <Download className="size-4" /> Descargar
-                                </span>
-                              </a>
-                            </div>
-                          </div>
-                        ))
+                        <Accordion type="multiple" className="space-y-3">
+                          {semana.archivos.map((archivo) => (
+                            <AccordionItem
+                              key={archivo.id}
+                              value={`archivo-${archivo.id}`}
+                              className="overflow-hidden rounded-2xl border border-white/10 bg-[#161834]/60"
+                            >
+                              <AccordionTrigger className="px-4">
+                                <div className="flex w-full items-start gap-3">
+                                  <div className="rounded-full border border-primary/30 bg-primary/10 p-2 text-primary">
+                                    <FileText className="size-4" />
+                                  </div>
+                                  <div className="text-left">
+                                    <p className="font-medium text-white">{archivo.nombre}</p>
+                                    <p className="text-xs text-muted-foreground">
+                                      Publicado el {formatDate(archivo.fecha_subida)}
+                                    </p>
+                                  </div>
+                                </div>
+                              </AccordionTrigger>
+                              <AccordionContent className="px-4">
+                                <div className="flex flex-col gap-3 border-t border-white/10 pt-4 sm:flex-row sm:items-center sm:justify-between">
+                                  <p className="text-xs text-muted-foreground">
+                                    Acciones disponibles
+                                  </p>
+                                  <div className="flex flex-wrap gap-2">
+                                    <a
+                                      href={"https://drive.google.com/file/d/" + archivo.drive_id + "/view"}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="rounded-full border border-primary/30 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-primary transition hover:bg-primary/20"
+                                    >
+                                      Previsualizar
+                                    </a>
+                                    <a
+                                      href={"https://drive.google.com/uc?export=download&id=" + archivo.drive_id}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="rounded-full border border-white/20 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-white/10"
+                                    >
+                                      <span className="flex items-center gap-2">
+                                        <Download className="size-4" /> Descargar
+                                      </span>
+                                    </a>
+                                  </div>
+                                </div>
+                              </AccordionContent>
+                            </AccordionItem>
+                          ))}
+                        </Accordion>
                       )}
                     </div>
                   </article>

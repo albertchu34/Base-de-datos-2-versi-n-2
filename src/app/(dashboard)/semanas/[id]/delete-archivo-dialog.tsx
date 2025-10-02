@@ -55,7 +55,7 @@ export function DeleteArchivoDialog({ archivo, semanaId, children }: DeleteArchi
         <AlertDialogHeader>
           <AlertDialogTitle>Eliminar archivo</AlertDialogTitle>
           <AlertDialogDescription className="text-muted-foreground">
-            Esta acción eliminará el archivo "{archivo.nombre}".
+            Esta acción eliminará el archivo {archivo.nombre}.
           </AlertDialogDescription>
         </AlertDialogHeader>
         {error && <p className="text-destructive text-sm">{error}</p>}
