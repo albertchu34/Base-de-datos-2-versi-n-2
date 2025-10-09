@@ -1,13 +1,12 @@
-import { z } from "zod"
+import { z } from 'zod';
 
 export const loginSchema = z.object({
-  email: z.string({ required_error: "El correo es obligatorio." }).email(
-    "Ingresa un correo válido."
-  ),
+  email: z.email('Ingresa un correo válido.'),
   password: z
-    .string({ required_error: "La contraseña es obligatoria." })
-    .min(6, "La contraseña debe tener al menos 6 caracteres."),
+    .string()
+    .min(1, 'La contraseña es obligatoria.')
+    .min(6, 'La contraseña debe tener al menos 6 caracteres.'),
   redirectTo: z.string().optional(),
-})
+});
 
-export type LoginSchema = z.infer<typeof loginSchema>
+export type LoginSchema = z.infer<typeof loginSchema>;

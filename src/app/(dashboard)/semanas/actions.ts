@@ -4,8 +4,8 @@
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
 
+import { parseGithubFileUrl } from "@/lib/github"
 import { createServerSupabaseClient } from "@/lib/supabase/server"
-import { extractDriveId } from "@/lib/drive"
 import {
   createArchivoSchema,
   createSemanaSchema,
@@ -23,6 +23,7 @@ export async function createSemanaAction(
   const parsed = createSemanaSchema.safeParse({
     ...values,
     titulo: values.titulo.trim(),
+    habilitada: values.habilitada ?? false,
   })
 
   if (!parsed.success) {
@@ -33,8 +34,22 @@ export async function createSemanaAction(
   }
 
   const supabase = await createServerSupabaseClient()
+  const { data: lastSemana, error: lastSemanaError } = await supabase
+    .from("semanas")
+    .select("numero")
+    .order("numero", { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  if (lastSemanaError) {
+    return { error: lastSemanaError.message }
+  }
+
+  const nextNumero = (lastSemana?.numero ?? 0) + 1
   const { error } = await supabase.from("semanas").insert({
     titulo: parsed.data.titulo,
+    numero: nextNumero,
+    habilitada: parsed.data.habilitada ?? false,
   })
 
   if (error) {
@@ -59,7 +74,7 @@ export async function createArchivoAction(
   const parsed = createArchivoPayloadSchema.safeParse({
     ...values,
     nombre: values.nombre.trim(),
-    drive_id: values.drive_id.trim(),
+    github_url: values.github_url.trim(),
   })
 
   if (!parsed.success) {
@@ -69,17 +84,17 @@ export async function createArchivoAction(
     }
   }
 
-  const { semana_id, nombre, drive_id } = parsed.data
-  const driveId = extractDriveId(drive_id)
-  if (!driveId) {
-    return { error: "Ingresa un enlace o ID válido de Google Drive." }
+  const { semana_id, nombre, github_url } = parsed.data
+  const githubInfo = parseGithubFileUrl(github_url)
+  if (!githubInfo) {
+    return { error: "Ingresa un enlace válido de GitHub." }
   }
 
   const supabase = await createServerSupabaseClient()
   const { error } = await supabase.from("archivos").insert({
     semana_id,
     nombre,
-    drive_id: driveId,
+    github_url: githubInfo.htmlUrl,
   })
 
   if (error) {
@@ -96,6 +111,7 @@ export async function createArchivoAction(
 
 const updateSemanaSchema = createSemanaSchema.extend({
   id: z.number().int().positive(),
+  habilitada: z.boolean(),
 })
 
 export type UpdateSemanaPayload = z.infer<typeof updateSemanaSchema>
@@ -106,6 +122,7 @@ export async function updateSemanaAction(
   const parsed = updateSemanaSchema.safeParse({
     ...values,
     titulo: values.titulo.trim(),
+    habilitada: values.habilitada,
   })
 
   if (!parsed.success) {
@@ -115,11 +132,15 @@ export async function updateSemanaAction(
     }
   }
 
-  const { id, titulo } = parsed.data
+  if (parsed.data.habilitada && parsed.data.titulo.length < 3) {
+    return { error: "Cuando la semana está habilitada, debe tener un título válido." }
+  }
+
+  const { id, titulo, habilitada } = parsed.data
   const supabase = await createServerSupabaseClient()
   const { error } = await supabase
     .from("semanas")
-    .update({ titulo })
+    .update({ titulo, habilitada })
     .eq("id", id)
 
   if (error) {
@@ -181,7 +202,7 @@ export async function updateArchivoAction(
   const parsed = updateArchivoPayloadSchema.safeParse({
     ...values,
     nombre: values.nombre.trim(),
-    drive_id: values.drive_id.trim(),
+    github_url: values.github_url.trim(),
   })
 
   if (!parsed.success) {
@@ -191,16 +212,16 @@ export async function updateArchivoAction(
     }
   }
 
-  const { id, semana_id, nombre, drive_id } = parsed.data
-  const driveId = extractDriveId(drive_id)
-  if (!driveId) {
-    return { error: "Ingresa un enlace o ID válido de Google Drive." }
+  const { id, semana_id, nombre, github_url } = parsed.data
+  const githubInfo = parseGithubFileUrl(github_url)
+  if (!githubInfo) {
+    return { error: "Ingresa un enlace válido de GitHub." }
   }
 
   const supabase = await createServerSupabaseClient()
   const { error } = await supabase
     .from("archivos")
-    .update({ nombre, drive_id: driveId })
+    .update({ nombre, github_url: githubInfo.htmlUrl })
     .eq("id", id)
 
   if (error) {

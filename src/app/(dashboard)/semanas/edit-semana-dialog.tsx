@@ -23,12 +23,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { createSemanaSchema, type CreateSemanaSchema } from "@/lib/validation/semanas"
 import { updateSemanaAction } from "./actions"
 import type { Tables } from "@/types/supabase"
+import { Switch } from "@/components/ui/switch"
 
 type EditSemanaDialogProps = {
   semana: Tables<"semanas">
@@ -44,6 +46,7 @@ export function EditSemanaDialog({ semana, children }: EditSemanaDialogProps) {
     resolver: zodResolver(createSemanaSchema),
     defaultValues: {
       titulo: semana.titulo,
+      habilitada: semana.habilitada,
     },
   })
 
@@ -53,6 +56,7 @@ export function EditSemanaDialog({ semana, children }: EditSemanaDialogProps) {
       const result = await updateSemanaAction({
         id: semana.id,
         titulo: values.titulo,
+        habilitada: values.habilitada ?? false,
       })
 
       if (result?.error) {
@@ -71,7 +75,7 @@ export function EditSemanaDialog({ semana, children }: EditSemanaDialogProps) {
         <DialogHeader>
           <DialogTitle>Editar semana</DialogTitle>
           <DialogDescription className="text-muted-foreground">
-            Actualiza el título para reflejar el contenido real de la semana.
+            Define el título y decide si la semana estará visible para los estudiantes.
           </DialogDescription>
         </DialogHeader>
         {error && (
@@ -91,6 +95,26 @@ export function EditSemanaDialog({ semana, children }: EditSemanaDialogProps) {
                     <Input autoComplete="off" {...field} />
                   </FormControl>
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="habilitada"
+              render={({ field }) => (
+                <FormItem className="rounded-xl border border-white/10 bg-black/10 p-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <FormLabel>Visibilidad</FormLabel>
+                      <FormDescription>
+                        Si está activa, los estudiantes verán esta semana en el portal.
+                      </FormDescription>
+                    </div>
+                    <Switch
+                      checked={field.value ?? false}
+                      onCheckedChange={field.onChange}
+                    />
+                  </div>
                 </FormItem>
               )}
             />

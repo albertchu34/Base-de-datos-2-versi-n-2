@@ -46,7 +46,7 @@ export function AddArchivoDialog({ semanaId, children }: AddArchivoDialogProps) 
     resolver: zodResolver(createArchivoSchema),
     defaultValues: {
       nombre: "",
-      drive_id: "",
+      github_url: "",
     },
   })
 
@@ -56,7 +56,7 @@ export function AddArchivoDialog({ semanaId, children }: AddArchivoDialogProps) 
       const result = await createArchivoAction({
         semana_id: semanaId,
         nombre: values.nombre,
-        drive_id: values.drive_id,
+        github_url: values.github_url,
       })
 
       if (result?.error) {
@@ -64,7 +64,7 @@ export function AddArchivoDialog({ semanaId, children }: AddArchivoDialogProps) 
         return
       }
 
-      form.reset({ nombre: "", drive_id: "" })
+      form.reset({ nombre: "", github_url: "" })
       setOpen(false)
     })
   }
@@ -76,7 +76,7 @@ export function AddArchivoDialog({ semanaId, children }: AddArchivoDialogProps) 
         <DialogHeader>
           <DialogTitle>Agregar archivo</DialogTitle>
           <DialogDescription className="text-muted-foreground">
-            Pega el enlace completo o el ID del archivo de Google Drive que deseas publicar.
+            Pega el enlace público del archivo almacenado en GitHub que deseas publicar.
           </DialogDescription>
         </DialogHeader>
         {error && (
@@ -101,13 +101,13 @@ export function AddArchivoDialog({ semanaId, children }: AddArchivoDialogProps) 
             />
             <FormField
               control={form.control}
-              name="drive_id"
+              name="github_url"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>ID de Google Drive</FormLabel>
+                  <FormLabel>Enlace de GitHub</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="https://drive.google.com/file/d/ABCDEFGHIJK/view"
+                      placeholder="https://github.com/usuario/repositorio/blob/main/ruta/al-archivo.pdf"
                       autoComplete="off"
                       {...field}
                     />

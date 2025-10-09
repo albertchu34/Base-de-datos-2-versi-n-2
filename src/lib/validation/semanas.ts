@@ -1,20 +1,26 @@
 import { z } from "zod"
 
+const requiredText = (message: string) => z.string().trim().min(1, message)
+
 export const createSemanaSchema = z.object({
-  titulo: z
-    .string({ required_error: "El título es obligatorio." })
-    .min(3, "El título debe tener al menos 3 caracteres."),
+  titulo: requiredText("El título es obligatorio.").min(
+    3,
+    "El título debe tener al menos 3 caracteres."
+  ),
+  habilitada: z.boolean().optional(),
 })
 
 export type CreateSemanaSchema = z.infer<typeof createSemanaSchema>
 
 export const createArchivoSchema = z.object({
-  nombre: z
-    .string({ required_error: "El nombre es obligatorio." })
-    .min(3, "El nombre debe tener al menos 3 caracteres."),
-  drive_id: z
-    .string({ required_error: "El ID de Drive es obligatorio." })
-    .min(10, "Ingresa un ID de Drive válido."),
+  nombre: requiredText("El nombre es obligatorio.").min(
+    3,
+    "El nombre debe tener al menos 3 caracteres."
+  ),
+  github_url: requiredText("El enlace de GitHub es obligatorio.").min(
+    10,
+    "Ingresa un enlace válido de GitHub."
+  ),
 })
 
 export type CreateArchivoSchema = z.infer<typeof createArchivoSchema>

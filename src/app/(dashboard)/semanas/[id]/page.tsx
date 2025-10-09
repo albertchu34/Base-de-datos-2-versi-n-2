@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { ArrowLeft, Download, Eye, Pencil, Trash2 } from "lucide-react"
+import { ArrowLeft, Download, Eye, Pencil, Trash2, ExternalLink } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { getSemanaById } from "@/lib/data/semanas"
+import { resolveGithubLinks } from "@/lib/github"
+import { ArchivoPreviewDialog } from "@/components/archivo-preview-dialog"
 
 import { AddArchivoDialog } from "./add-archivo-dialog"
 import { EditArchivoDialog } from "./edit-archivo-dialog"
@@ -93,64 +95,73 @@ export default async function SemanaDetailPage({
                 </TableCell>
               </TableRow>
             ) : (
-              archivos.map((archivo) => (
-                <TableRow key={archivo.id} className="border-white/5">
-                  <TableCell className="text-white">{archivo.nombre}</TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {formatDateTime(archivo.fecha_subida)}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex flex-wrap justify-end gap-2">
-                      <EditArchivoDialog archivo={archivo} semanaId={semana.id}>
+              archivos.map((archivo) => {
+                const links = resolveGithubLinks(archivo.github_url)
+                const downloadUrl = links?.downloadUrl ?? archivo.github_url
+                const htmlUrl = links?.htmlUrl ?? archivo.github_url
+
+                return (
+                  <TableRow key={archivo.id} className="border-white/5">
+                    <TableCell className="text-white">
+                      <p className="font-medium text-white">{archivo.nombre}</p>
+                      <p className="break-all text-xs text-muted-foreground">{archivo.github_url}</p>
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {formatDateTime(archivo.fecha_subida)}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex flex-wrap justify-end gap-2">
+                        <EditArchivoDialog archivo={archivo} semanaId={semana.id}>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="gap-2 border-primary/20 text-primary"
+                          >
+                            <Pencil className="size-4" /> Editar
+                          </Button>
+                        </EditArchivoDialog>
+                        <DeleteArchivoDialog archivo={archivo} semanaId={semana.id}>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="gap-2 text-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="size-4" /> Eliminar
+                          </Button>
+                        </DeleteArchivoDialog>
+                        <ArchivoPreviewDialog
+                          archivoNombre={archivo.nombre}
+                          githubUrl={archivo.github_url}
+                        >
+                          <Button variant="ghost" size="sm" className="gap-2 text-primary">
+                            <Eye className="size-4" /> Previsualizar
+                          </Button>
+                        </ArchivoPreviewDialog>
                         <Button
+                          asChild
                           variant="outline"
                           size="sm"
                           className="gap-2 border-primary/20 text-primary"
                         >
-                          <Pencil className="size-4" /> Editar
+                          <a href={downloadUrl} target="_blank" rel="noopener noreferrer" download>
+                            <Download className="size-4" /> Descargar
+                          </a>
                         </Button>
-                      </EditArchivoDialog>
-                      <DeleteArchivoDialog archivo={archivo} semanaId={semana.id}>
                         <Button
+                          asChild
                           variant="ghost"
                           size="sm"
-                          className="gap-2 text-destructive hover:text-destructive"
+                          className="gap-2 text-muted-foreground hover:text-primary"
                         >
-                          <Trash2 className="size-4" /> Eliminar
+                          <a href={htmlUrl} target="_blank" rel="noopener noreferrer">
+                            <ExternalLink className="size-4" /> Abrir en GitHub
+                          </a>
                         </Button>
-                      </DeleteArchivoDialog>
-                      <Button
-                        asChild
-                        variant="ghost"
-                        size="sm"
-                        className="gap-2 text-primary"
-                      >
-                        <a
-                          href={"https://drive.google.com/file/d/" + archivo.drive_id + "/view"}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <Eye className="size-4" /> Previsualizar
-                        </a>
-                      </Button>
-                      <Button
-                        asChild
-                        variant="outline"
-                        size="sm"
-                        className="gap-2 border-primary/20 text-primary"
-                      >
-                        <a
-                          href={"https://drive.google.com/uc?export=download&id=" + archivo.drive_id}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <Download className="size-4" /> Descargar
-                        </a>
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )
+              })
             )}
           </TableBody>
         </Table>

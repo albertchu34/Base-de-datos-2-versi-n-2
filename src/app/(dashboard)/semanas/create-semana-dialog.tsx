@@ -22,6 +22,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -31,6 +32,7 @@ import {
 } from "@/lib/validation/semanas"
 
 import { createSemanaAction } from "./actions"
+import { Switch } from "@/components/ui/switch"
 
 type CreateSemanaDialogProps = {
   children: ReactNode
@@ -45,6 +47,7 @@ export function CreateSemanaDialog({ children }: CreateSemanaDialogProps) {
     resolver: zodResolver(createSemanaSchema),
     defaultValues: {
       titulo: "",
+      habilitada: false,
     },
   })
 
@@ -57,7 +60,7 @@ export function CreateSemanaDialog({ children }: CreateSemanaDialogProps) {
         return
       }
 
-      form.reset({ titulo: "" })
+      form.reset({ titulo: "", habilitada: false })
       setOpen(false)
     })
   }
@@ -93,6 +96,26 @@ export function CreateSemanaDialog({ children }: CreateSemanaDialogProps) {
                     />
                   </FormControl>
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="habilitada"
+              render={({ field }) => (
+                <FormItem className="rounded-xl border border-white/10 bg-black/10 p-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <FormLabel>Mostrar en el portal</FormLabel>
+                      <FormDescription>
+                        Activa la semana cuando quieras que sea visible para los estudiantes.
+                      </FormDescription>
+                    </div>
+                    <Switch
+                      checked={field.value ?? false}
+                      onCheckedChange={field.onChange}
+                    />
+                  </div>
                 </FormItem>
               )}
             />

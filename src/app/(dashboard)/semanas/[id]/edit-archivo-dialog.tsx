@@ -48,7 +48,7 @@ export function EditArchivoDialog({ archivo, semanaId, children }: EditArchivoDi
     resolver: zodResolver(createArchivoSchema),
     defaultValues: {
       nombre: archivo.nombre,
-      drive_id: archivo.drive_id,
+      github_url: archivo.github_url,
     },
   })
 
@@ -59,7 +59,7 @@ export function EditArchivoDialog({ archivo, semanaId, children }: EditArchivoDi
         id: archivo.id,
         semana_id: semanaId,
         nombre: values.nombre,
-        drive_id: values.drive_id,
+        github_url: values.github_url,
       })
 
       if (result?.error) {
@@ -95,7 +95,11 @@ export function EditArchivoDialog({ archivo, semanaId, children }: EditArchivoDi
                 <FormItem>
                   <FormLabel>Nombre</FormLabel>
                   <FormControl>
-                    <Input autoComplete="off" {...field} />
+                    <Input
+                      autoComplete="off"
+                      placeholder="https://github.com/usuario/repositorio/blob/main/ruta/al-archivo.pdf"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -103,10 +107,10 @@ export function EditArchivoDialog({ archivo, semanaId, children }: EditArchivoDi
             />
             <FormField
               control={form.control}
-              name="drive_id"
+              name="github_url"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Enlace o ID de Google Drive</FormLabel>
+                  <FormLabel>Enlace público de GitHub</FormLabel>
                   <FormControl>
                     <Input autoComplete="off" {...field} />
                   </FormControl>

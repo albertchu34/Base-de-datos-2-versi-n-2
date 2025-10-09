@@ -19,6 +19,8 @@ import { getSemanas } from "@/lib/data/semanas"
 import { EditSemanaDialog } from "./edit-semana-dialog"
 import { DeleteSemanaDialog } from "./delete-semana-dialog"
 import { CreateSemanaDialog } from "./create-semana-dialog"
+import { Badge } from "@/components/ui/badge"
+import { VisibilityToggle } from "./visibility-toggle"
 
 function formatDateTime(value?: string | null) {
   if (!value) return "Sin registro"
@@ -53,6 +55,7 @@ export default async function SemanasPage() {
           <TableHeader>
             <TableRow className="border-white/10">
               <TableHead className="text-muted-foreground">Semana</TableHead>
+              <TableHead className="text-muted-foreground">Visibilidad</TableHead>
               <TableHead className="text-muted-foreground">Fecha</TableHead>
               <TableHead className="text-muted-foreground text-right">
                 Acciones
@@ -69,7 +72,25 @@ export default async function SemanasPage() {
             ) : (
               semanas.map((semana) => (
                 <TableRow key={semana.id} className="border-white/5">
-                  <TableCell className="text-white">{semana.titulo}</TableCell>
+                  <TableCell className="space-y-1 text-white">
+                    <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
+                      Semana {semana.numero}
+                    </p>
+                    <p className="text-sm font-semibold text-white">{semana.titulo}</p>
+                    <Badge
+                      variant={semana.habilitada ? "default" : "outline"}
+                      className={semana.habilitada ? "bg-primary/20 text-primary" : "border-dashed border-white/30 text-muted-foreground"}
+                    >
+                      {semana.habilitada ? "Visible" : "Próximamente"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <VisibilityToggle
+                      semanaId={semana.id}
+                      titulo={semana.titulo}
+                      habilitada={semana.habilitada}
+                    />
+                  </TableCell>
                   <TableCell className="text-muted-foreground">
                     {formatDateTime(semana.fecha_creacion)}
                   </TableCell>

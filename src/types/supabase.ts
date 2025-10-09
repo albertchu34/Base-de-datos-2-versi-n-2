@@ -14,21 +14,21 @@ export type Database = {
           id: number
           semana_id: number | null
           nombre: string
-          drive_id: string
+          github_url: string
           fecha_subida: string | null
         }
         Insert: {
           id?: number
           semana_id?: number | null
           nombre: string
-          drive_id: string
+          github_url: string
           fecha_subida?: string | null
         }
         Update: {
           id?: number
           semana_id?: number | null
           nombre?: string
-          drive_id?: string
+          github_url?: string
           fecha_subida?: string | null
         }
         Relationships: [
@@ -44,16 +44,22 @@ export type Database = {
         Row: {
           id: number
           titulo: string
+          numero: number
+          habilitada: boolean
           fecha_creacion: string | null
         }
         Insert: {
           id?: number
           titulo: string
+          numero: number
+          habilitada?: boolean
           fecha_creacion?: string | null
         }
         Update: {
           id?: number
           titulo?: string
+          numero?: number
+          habilitada?: boolean
           fecha_creacion?: string | null
         }
         Relationships: []
