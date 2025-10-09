@@ -1,3 +1,7 @@
+-- Reset existing tables when rerunning the migration (development convenience).
+drop table if exists public.archivos cascade;
+drop table if exists public.semanas cascade;
+
 create table if not exists public.semanas (
   id bigint generated always as identity primary key,
   titulo text not null,
