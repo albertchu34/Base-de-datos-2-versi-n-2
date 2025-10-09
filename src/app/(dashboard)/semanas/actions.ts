@@ -23,6 +23,7 @@ export async function createSemanaAction(
   const parsed = createSemanaSchema.safeParse({
     ...values,
     titulo: values.titulo.trim(),
+    descripcion: values.descripcion.trim(),
     habilitada: values.habilitada ?? false,
   })
 
@@ -49,6 +50,7 @@ export async function createSemanaAction(
   const { error } = await supabase.from("semanas").insert({
     titulo: parsed.data.titulo,
     numero: nextNumero,
+    descripcion: parsed.data.descripcion,
     habilitada: parsed.data.habilitada ?? false,
   })
 
@@ -58,6 +60,7 @@ export async function createSemanaAction(
 
   revalidatePath("/dashboard")
   revalidatePath("/semanas")
+  revalidatePath("/")
 
   return { success: true }
 }
@@ -105,6 +108,7 @@ export async function createArchivoAction(
   revalidatePath(detailPath)
   revalidatePath("/semanas")
   revalidatePath("/dashboard")
+  revalidatePath("/")
 
   return { success: true }
 }
@@ -122,6 +126,7 @@ export async function updateSemanaAction(
   const parsed = updateSemanaSchema.safeParse({
     ...values,
     titulo: values.titulo.trim(),
+    descripcion: values.descripcion.trim(),
     habilitada: values.habilitada,
   })
 
@@ -136,11 +141,11 @@ export async function updateSemanaAction(
     return { error: "Cuando la semana está habilitada, debe tener un título válido." }
   }
 
-  const { id, titulo, habilitada } = parsed.data
+  const { id, titulo, descripcion, habilitada } = parsed.data
   const supabase = await createServerSupabaseClient()
   const { error } = await supabase
     .from("semanas")
-    .update({ titulo, habilitada })
+    .update({ titulo, descripcion, habilitada })
     .eq("id", id)
 
   if (error) {
@@ -151,6 +156,7 @@ export async function updateSemanaAction(
   revalidatePath("/dashboard")
   revalidatePath("/semanas")
   revalidatePath(detailPath)
+  revalidatePath("/")
 
   return { success: true }
 }
@@ -185,6 +191,7 @@ export async function deleteSemanaAction(
   revalidatePath("/dashboard")
   revalidatePath("/semanas")
   revalidatePath(detailPath)
+  revalidatePath("/")
 
   return { success: true }
 }
@@ -232,6 +239,7 @@ export async function updateArchivoAction(
   revalidatePath(detailPath)
   revalidatePath("/semanas")
   revalidatePath("/dashboard")
+  revalidatePath("/")
 
   return { success: true }
 }
@@ -267,6 +275,7 @@ export async function deleteArchivoAction(
   revalidatePath(detailPath)
   revalidatePath("/semanas")
   revalidatePath("/dashboard")
+  revalidatePath("/")
 
   return { success: true }
 }

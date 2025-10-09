@@ -26,6 +26,7 @@ import {
   FormDescription,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { createSemanaSchema, type CreateSemanaSchema } from "@/lib/validation/semanas"
 import { updateSemanaAction } from "./actions"
@@ -46,6 +47,7 @@ export function EditSemanaDialog({ semana, children }: EditSemanaDialogProps) {
     resolver: zodResolver(createSemanaSchema),
     defaultValues: {
       titulo: semana.titulo,
+      descripcion: semana.descripcion ?? "",
       habilitada: semana.habilitada,
     },
   })
@@ -56,6 +58,7 @@ export function EditSemanaDialog({ semana, children }: EditSemanaDialogProps) {
       const result = await updateSemanaAction({
         id: semana.id,
         titulo: values.titulo,
+        descripcion: values.descripcion,
         habilitada: values.habilitada ?? false,
       })
 
@@ -75,7 +78,7 @@ export function EditSemanaDialog({ semana, children }: EditSemanaDialogProps) {
         <DialogHeader>
           <DialogTitle>Editar semana</DialogTitle>
           <DialogDescription className="text-muted-foreground">
-            Define el título y decide si la semana estará visible para los estudiantes.
+            Ajusta el título, la descripción y decide si la semana estará visible para los estudiantes.
           </DialogDescription>
         </DialogHeader>
         {error && (
@@ -93,6 +96,22 @@ export function EditSemanaDialog({ semana, children }: EditSemanaDialogProps) {
                   <FormLabel>Título de la semana</FormLabel>
                   <FormControl>
                     <Input autoComplete="off" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="descripcion"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Descripción</FormLabel>
+                  <FormDescription>
+                    Resume los recursos o actividades que se cubrirán esta semana.
+                  </FormDescription>
+                  <FormControl>
+                    <Textarea rows={4} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -65,18 +65,21 @@ export default async function SemanasPage() {
           <TableBody>
             {semanas.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={3} className="py-10 text-center text-sm text-muted-foreground">
+                <TableCell colSpan={4} className="py-10 text-center text-sm text-muted-foreground">
                   Aún no se han registrado semanas. Crea una para comenzar.
                 </TableCell>
               </TableRow>
             ) : (
               semanas.map((semana) => (
                 <TableRow key={semana.id} className="border-white/5">
-                  <TableCell className="space-y-1 text-white">
+                  <TableCell className="space-y-2 text-white">
                     <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
                       Semana {semana.numero}
                     </p>
                     <p className="text-sm font-semibold text-white">{semana.titulo}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {semana.descripcion || "Descripción pendiente."}
+                    </p>
                     <Badge
                       variant={semana.habilitada ? "default" : "outline"}
                       className={semana.habilitada ? "bg-primary/20 text-primary" : "border-dashed border-white/30 text-muted-foreground"}
@@ -88,6 +91,7 @@ export default async function SemanasPage() {
                     <VisibilityToggle
                       semanaId={semana.id}
                       titulo={semana.titulo}
+                      descripcion={semana.descripcion}
                       habilitada={semana.habilitada}
                     />
                   </TableCell>

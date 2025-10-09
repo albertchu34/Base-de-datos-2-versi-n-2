@@ -65,6 +65,9 @@ export default async function SemanaDetailPage({
           <p className="text-sm text-muted-foreground">
             Registrada el {formatDateTime(semana.fecha_creacion)}
           </p>
+          <p className="max-w-2xl text-sm text-muted-foreground/80">
+            {semana.descripcion || "Esta semana aún no tiene una descripción. Edita los detalles para añadirla."}
+          </p>
         </div>
         <div className="flex items-center gap-3">
           <Badge variant="outline" className="border-primary/30 text-primary">

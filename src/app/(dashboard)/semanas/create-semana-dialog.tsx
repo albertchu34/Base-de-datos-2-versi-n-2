@@ -25,6 +25,7 @@ import {
   FormDescription,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import {
   createSemanaSchema,
@@ -47,6 +48,7 @@ export function CreateSemanaDialog({ children }: CreateSemanaDialogProps) {
     resolver: zodResolver(createSemanaSchema),
     defaultValues: {
       titulo: "",
+      descripcion: "",
       habilitada: false,
     },
   })
@@ -60,7 +62,7 @@ export function CreateSemanaDialog({ children }: CreateSemanaDialogProps) {
         return
       }
 
-      form.reset({ titulo: "", habilitada: false })
+      form.reset({ titulo: "", descripcion: "", habilitada: false })
       setOpen(false)
     })
   }
@@ -90,8 +92,28 @@ export function CreateSemanaDialog({ children }: CreateSemanaDialogProps) {
                   <FormLabel>Título de la semana</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Semana 7 - Modelado lógico"
+                      placeholder="Semana 7"
                       autoComplete="off"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="descripcion"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Descripción</FormLabel>
+                  <FormDescription>
+                    Comparte el objetivo o contenido principal de la semana.
+                  </FormDescription>
+                  <FormControl>
+                    <Textarea
+                      rows={4}
+                      placeholder="Manual para crear una cuenta en GitHub, pautas iniciales y recursos introductorios."
                       {...field}
                     />
                   </FormControl>

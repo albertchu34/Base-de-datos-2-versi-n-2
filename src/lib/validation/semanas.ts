@@ -7,6 +7,10 @@ export const createSemanaSchema = z.object({
     3,
     "El título debe tener al menos 3 caracteres."
   ),
+  descripcion: requiredText("La descripción es obligatoria.").min(
+    10,
+    "Describe brevemente el contenido de la semana."
+  ),
   habilitada: z.boolean().optional(),
 })
 

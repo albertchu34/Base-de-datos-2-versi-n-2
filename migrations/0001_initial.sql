@@ -6,6 +6,7 @@ create table if not exists public.semanas (
   id bigint generated always as identity primary key,
   titulo text not null,
   numero smallint not null unique,
+  descripcion text not null default 'Descripción pendiente.',
   habilitada boolean not null default false,
   fecha_creacion timestamp with time zone default timezone('utc'::text, now())
 );
@@ -21,8 +22,12 @@ create table if not exists public.archivos (
 create index if not exists archivos_semana_id_idx on public.archivos (semana_id);
 
 -- Ensure default 16 weeks
-insert into public.semanas (numero, titulo, habilitada)
-select series.numero, 'Semana ' || series.numero, false
+insert into public.semanas (numero, titulo, descripcion, habilitada)
+select
+  series.numero,
+  'Semana ' || series.numero,
+  'Descripción pendiente.',
+  false
 from generate_series(1, 16) as series(numero)
 where not exists (
   select 1 from public.semanas s where s.numero = series.numero

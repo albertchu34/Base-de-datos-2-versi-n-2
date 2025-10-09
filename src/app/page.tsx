@@ -94,7 +94,7 @@ export default async function HomePage() {
                 <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-[#14173a]/80 p-2 shadow-[0_20px_45px_rgba(10,12,30,0.45)]">
                   <div className="relative h-60 w-full overflow-hidden rounded-xl bg-gradient-to-br from-[#1f2245]/70 to-[#0f1129]/70">
                     <Image
-                      src="/foto.png"
+                      src="/foto.jpg"
                       alt="Fotografía de Albert Jeankarlo Chuquiyauri Lagunas"
                       fill
                       sizes="(min-width: 768px) 320px, 100vw"
@@ -175,6 +175,9 @@ export default async function HomePage() {
                           </div>
                           <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
                             Registrada el {formatDate(semana.fecha_creacion)}
+                          </p>
+                          <p className="max-w-prose text-sm text-muted-foreground">
+                            {semana.descripcion || "Descripción pendiente. Actualiza esta semana para añadir un resumen."}
                           </p>
                         </div>
                         <Link

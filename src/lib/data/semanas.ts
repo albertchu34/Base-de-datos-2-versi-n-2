@@ -14,6 +14,7 @@ const DEFAULT_SEMANAS = Array.from({ length: 16 }, (_, index) => {
   return {
     numero,
     titulo: `Semana ${numero}`,
+    descripcion: "Descripción pendiente.",
   }
 })
 
@@ -38,6 +39,7 @@ async function ensureDefaultSemanas() {
       missing.map((item) => ({
         numero: item.numero,
         titulo: item.titulo,
+        descripcion: item.descripcion,
         habilitada: false,
       }))
     )

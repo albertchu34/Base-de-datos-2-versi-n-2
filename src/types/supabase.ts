@@ -45,6 +45,7 @@ export type Database = {
           id: number
           titulo: string
           numero: number
+          descripcion: string
           habilitada: boolean
           fecha_creacion: string | null
         }
@@ -52,6 +53,7 @@ export type Database = {
           id?: number
           titulo: string
           numero: number
+          descripcion?: string
           habilitada?: boolean
           fecha_creacion?: string | null
         }
@@ -59,6 +61,7 @@ export type Database = {
           id?: number
           titulo?: string
           numero?: number
+          descripcion?: string
           habilitada?: boolean
           fecha_creacion?: string | null
         }

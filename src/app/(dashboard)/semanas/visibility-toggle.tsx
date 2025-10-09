@@ -9,10 +9,16 @@ import { updateSemanaAction } from "./actions"
 type VisibilityToggleProps = {
   semanaId: number
   titulo: string
+  descripcion: string
   habilitada: boolean
 }
 
-export function VisibilityToggle({ semanaId, titulo, habilitada }: VisibilityToggleProps) {
+export function VisibilityToggle({
+  semanaId,
+  titulo,
+  descripcion,
+  habilitada,
+}: VisibilityToggleProps) {
   const [checked, setChecked] = useState(habilitada)
   const [error, setError] = useState<string | null>(null)
   const [pending, startTransition] = useTransition()
@@ -26,6 +32,7 @@ export function VisibilityToggle({ semanaId, titulo, habilitada }: VisibilityTog
       const result = await updateSemanaAction({
         id: semanaId,
         titulo,
+        descripcion,
         habilitada: value,
       })
 
