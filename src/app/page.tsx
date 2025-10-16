@@ -36,6 +36,10 @@ export default async function HomePage() {
             </p>
             <h1 className="text-gradient text-2xl font-semibold">Base de Datos II</h1>
           </div>
+             <h1 className="text-gradient text-2xl font-semibold">Chuquiyauri Lagunas Albert Jeankarlo</h1>
+          <div>
+
+          </div>
           <div className="flex items-center gap-4">
             <div className="rounded-xl border border-white/20 bg-white/90 p-2 shadow-[0_8px_20px_rgba(0,0,0,0.25)]">
               <Image
