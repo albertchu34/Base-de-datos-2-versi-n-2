@@ -69,7 +69,7 @@ export default async function HomePage() {
                 Presentación
               </span>
               <h2 className="text-gradient text-3xl font-semibold leading-tight">
-                Albert Jeankarlo Chuquiyauri Lagunas
+                Datos del Estudiante
               </h2>
               <p className="text-muted-foreground">
                 Estudiante de Ingeniería de Sistemas y Computación en la UPLA.

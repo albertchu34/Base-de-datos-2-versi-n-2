@@ -3,7 +3,6 @@
 import { useState, type ReactNode } from "react"
 import { ExternalLink } from "lucide-react"
 
-import { resolveGithubLinks } from "@/lib/github"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -15,6 +14,23 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+
+// ✅ Función corregida para resolver correctamente los enlaces desde GitHub
+function resolveGithubLinks(githubUrl: string) {
+  const regex = /https:\/\/github\.com\/([^/]+)\/([^/]+)\/blob\/([^/]+)\/(.+)/
+  const match = githubUrl.match(regex)
+
+  if (!match) return null
+
+  const [, user, repo, branch, path] = match
+  const rawUrl = `https://raw.githubusercontent.com/${user}/${repo}/${branch}/${path}`
+
+  return {
+    previewUrl: rawUrl, // ✅ se puede usar en iframe si es HTML, PDF o imagen
+    downloadUrl: rawUrl,
+    htmlUrl: githubUrl,
+  }
+}
 
 type ArchivoPreviewDialogProps = {
   archivoNombre: string
@@ -34,6 +50,11 @@ export function ArchivoPreviewDialog({
   const downloadUrl = links?.downloadUrl ?? githubUrl
   const htmlUrl = links?.htmlUrl ?? githubUrl
 
+  // ✅ Solo permitimos vista previa para formatos soportados
+  const canPreview =
+    previewUrl &&
+    /\.(html?|pdf|png|jpg|jpeg|gif|svg|txt|md)$/i.test(archivoNombre)
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -47,7 +68,7 @@ export function ArchivoPreviewDialog({
           </DialogDescription>
         </DialogHeader>
 
-        {previewUrl ? (
+        {canPreview ? (
           <div className="overflow-hidden rounded-xl border border-white/10 bg-black/60">
             <iframe
               src={previewUrl}
@@ -58,10 +79,13 @@ export function ArchivoPreviewDialog({
             />
           </div>
         ) : (
-          <Alert variant="default" className="border-white/10 bg-white/5 text-white">
+          <Alert
+            variant="default"
+            className="border-white/10 bg-white/5 text-white"
+          >
             <AlertDescription>
-              No pudimos generar una vista previa automática. Abre el archivo
-              directamente en GitHub para revisarlo.
+              No pudimos generar una vista previa automática para este tipo de
+              archivo. Puedes abrirlo directamente en GitHub para revisarlo.
             </AlertDescription>
           </Alert>
         )}
