@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dialog"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
-// ✅ Función corregida para resolver correctamente los enlaces desde GitHub
+// ✅ Función mejorada para generar URLs válidas de GitHub y visores online
 function resolveGithubLinks(githubUrl: string) {
   const regex = /https:\/\/github\.com\/([^/]+)\/([^/]+)\/blob\/([^/]+)\/(.+)/
   const match = githubUrl.match(regex)
@@ -26,7 +26,7 @@ function resolveGithubLinks(githubUrl: string) {
   const rawUrl = `https://raw.githubusercontent.com/${user}/${repo}/${branch}/${path}`
 
   return {
-    previewUrl: rawUrl, // ✅ se puede usar en iframe si es HTML, PDF o imagen
+    previewUrl: rawUrl,
     downloadUrl: rawUrl,
     htmlUrl: githubUrl,
   }
@@ -50,14 +50,31 @@ export function ArchivoPreviewDialog({
   const downloadUrl = links?.downloadUrl ?? githubUrl
   const htmlUrl = links?.htmlUrl ?? githubUrl
 
-  // ✅ Solo permitimos vista previa para formatos soportados
-  const canPreview =
-    previewUrl &&
-    /\.(html?|pdf|png|jpg|jpeg|gif|svg|txt|md)$/i.test(archivoNombre)
+  // ✅ Detectar extensión del archivo
+  const extension = archivoNombre.split(".").pop()?.toLowerCase()
+
+  // ✅ Extensiones que pueden previsualizarse directamente
+  const directPreviewExtensions = ["html", "pdf", "png", "jpg", "jpeg", "gif", "svg", "txt", "md"]
+
+  let embedUrl: string | null = null
+
+  if (previewUrl && extension) {
+    if (directPreviewExtensions.includes(extension)) {
+      embedUrl = previewUrl
+    } else if (["docx", "xlsx", "pptx"].includes(extension)) {
+      // ✅ Usar visores externos de Microsoft o Google
+      embedUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(previewUrl)}`
+    } else if (["doc", "xls", "ppt"].includes(extension)) {
+      embedUrl = `https://docs.google.com/gview?url=${encodeURIComponent(previewUrl)}&embedded=true`
+    }
+  }
+
+  const canPreview = !!embedUrl
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
+
       <DialogContent className="max-w-4xl border-white/10 bg-[#141632]/95 text-white sm:max-w-5xl">
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold">
@@ -71,7 +88,7 @@ export function ArchivoPreviewDialog({
         {canPreview ? (
           <div className="overflow-hidden rounded-xl border border-white/10 bg-black/60">
             <iframe
-              src={previewUrl}
+              src={embedUrl!}
               title={`Previsualización ${archivoNombre}`}
               loading="lazy"
               className="h-[70vh] w-full rounded-xl bg-[#0b0d21]"
@@ -113,3 +130,4 @@ export function ArchivoPreviewDialog({
     </Dialog>
   )
 }
+
